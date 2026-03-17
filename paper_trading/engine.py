@@ -124,7 +124,7 @@ class BacktestEngine:
         total_return_pct = (final_equity / initial_cash - 1) * 100
 
         # Annualized return (CAGR)
-        n_days = len(equity_curve)
+        n_days = equity_curve["timestamp"].nunique()
         years = n_days / 252
         if years > 0 and final_equity > 0:
             annualized_return_pct = ((final_equity / initial_cash) ** (1 / years) - 1) * 100
