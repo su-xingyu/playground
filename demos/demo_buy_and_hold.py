@@ -15,7 +15,8 @@ from paper_trading.engine import BacktestEngine
 from paper_trading.orders import Fill
 from paper_trading.strategy import Strategy
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "aapl_daily.csv")
+DATA_DIR  = os.path.join(os.path.dirname(__file__), "..", "data")
+DATA_PATH = os.path.join(DATA_DIR, "aapl_daily.csv")
 
 
 class BuyAndHoldStrategy(Strategy):

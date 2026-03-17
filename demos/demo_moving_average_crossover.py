@@ -18,7 +18,8 @@ from paper_trading.engine import BacktestEngine
 from paper_trading.orders import Fill
 from paper_trading.strategy import Strategy
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "synth_daily.csv")
+DATA_DIR  = os.path.join(os.path.dirname(__file__), "..", "data")
+DATA_PATH = os.path.join(DATA_DIR, "googl_daily.csv")
 
 
 class SMACrossoverStrategy(Strategy):
@@ -55,7 +56,7 @@ class SMACrossoverStrategy(Strategy):
 
 
 def main():
-    SYMBOL = "SYNTH"
+    SYMBOL = "GOOGL"
     QTY = 100
     INITIAL_CASH = 100_000.0
 

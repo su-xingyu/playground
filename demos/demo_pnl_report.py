@@ -19,7 +19,8 @@ from paper_trading.data import Bar, CsvDataFeed
 from paper_trading.engine import BacktestEngine, BacktestResult
 from paper_trading.strategy import Strategy
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "synth_daily.csv")
+DATA_DIR  = os.path.join(os.path.dirname(__file__), "..", "data")
+DATA_PATH = os.path.join(DATA_DIR, "googl_daily.csv")
 
 
 class SMACrossoverStrategy(Strategy):
@@ -138,8 +139,8 @@ def print_report(result: BacktestResult) -> None:
 
 
 def main():
-    feed = CsvDataFeed("SYNTH", DATA_PATH)
-    strategy = SMACrossoverStrategy("SYNTH", qty=100)
+    feed = CsvDataFeed("GOOGL", DATA_PATH)
+    strategy = SMACrossoverStrategy("GOOGL", qty=100)
     broker = PaperBroker(100_000.0)
     engine = BacktestEngine(strategy, feed, broker)
     result = engine.run()
