@@ -174,30 +174,61 @@ class BacktestEngine:
         }
 
     def _compute_trade_pnls(self, fills: list[Fill]) -> list[float]:
-        """Compute realized P&L per round trip using FIFO matching."""
+        """Compute realized P&L per round trip using FIFO matching.
+
+        Handles both long round trips (buy → sell) and short round trips
+        (sell → buy). A P&L entry is recorded whenever a fill closes or
+        reduces an existing position.
+        """
         from collections import deque
         pnls: list[float] = []
-        long_lots: dict[str, deque] = {}
+        long_lots:  dict[str, deque] = {}
+        short_lots: dict[str, deque] = {}
 
         for fill in sorted(fills, key=lambda f: f.timestamp):
             sym = fill.symbol
             if sym not in long_lots:
-                long_lots[sym] = deque()
+                long_lots[sym]  = deque()
+                short_lots[sym] = deque()
 
             if fill.side.value == "buy":
-                long_lots[sym].append([fill.qty, fill.fill_price])
-            else:
-                remaining = fill.qty
-                trade_pnl = 0.0
-                while remaining > 0 and long_lots[sym]:
-                    lot = long_lots[sym][0]
-                    matched = min(lot[0], remaining)
-                    trade_pnl += matched * (fill.fill_price - lot[1])
-                    lot[0] -= matched
-                    remaining -= matched
-                    if lot[0] == 0:
-                        long_lots[sym].popleft()
-                trade_pnl -= fill.commission
-                pnls.append(trade_pnl)
+                if short_lots[sym]:
+                    # Covering a short position
+                    remaining = fill.qty
+                    trade_pnl = 0.0
+                    while remaining > 0 and short_lots[sym]:
+                        lot = short_lots[sym][0]
+                        matched = min(lot[0], remaining)
+                        trade_pnl += matched * (lot[1] - fill.fill_price)
+                        lot[0] -= matched
+                        remaining -= matched
+                        if lot[0] == 0:
+                            short_lots[sym].popleft()
+                    trade_pnl -= fill.commission
+                    pnls.append(trade_pnl)
+                    if remaining > 0:
+                        long_lots[sym].append([remaining, fill.fill_price])
+                else:
+                    long_lots[sym].append([fill.qty, fill.fill_price])
+
+            else:  # sell
+                if long_lots[sym]:
+                    # Closing a long position
+                    remaining = fill.qty
+                    trade_pnl = 0.0
+                    while remaining > 0 and long_lots[sym]:
+                        lot = long_lots[sym][0]
+                        matched = min(lot[0], remaining)
+                        trade_pnl += matched * (fill.fill_price - lot[1])
+                        lot[0] -= matched
+                        remaining -= matched
+                        if lot[0] == 0:
+                            long_lots[sym].popleft()
+                    trade_pnl -= fill.commission
+                    pnls.append(trade_pnl)
+                    if remaining > 0:
+                        short_lots[sym].append([remaining, fill.fill_price])
+                else:
+                    short_lots[sym].append([fill.qty, fill.fill_price])
 
         return pnls

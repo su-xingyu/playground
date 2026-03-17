@@ -5,7 +5,7 @@ Runs the SMA crossover strategy and prints:
 - Full stats table
 - Text-based equity curve
 - Text-based drawdown chart
-Data: data/synth_daily.csv
+Data: data/googl_daily.csv
 """
 
 import sys

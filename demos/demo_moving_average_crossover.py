@@ -3,7 +3,7 @@ Demo: Moving Average Crossover
 -------------------------------
 Go long when SMA(20) crosses above SMA(50).
 Exit when SMA(20) crosses below SMA(50).
-Data: data/synth_daily.csv  (uptrend → downtrend → uptrend regime)
+Data: data/googl_daily.csv  (uptrend → downtrend → uptrend regime)
 """
 
 import sys

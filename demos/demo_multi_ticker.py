@@ -10,7 +10,7 @@ open. To avoid spending cash that is tied up in pending fills, sells are submitt
 one bar before buys: at rebalance bar N we sell exiting positions; at bar N+1 (when
 sells have filled) we buy entering positions with the freed cash.
 
-Data: data/multi/{symbol}_daily.csv
+Data: data/{symbol}_daily.csv
 """
 
 import sys

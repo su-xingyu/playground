@@ -12,8 +12,8 @@ class Position:
     def __init__(self, symbol: str):
         self.symbol = symbol
         # Each lot: [qty, cost_price]  (mutable so we can partially consume)
-        self._long_lots: deque[list[int, float]] = deque()
-        self._short_lots: deque[list[int, float]] = deque()
+        self._long_lots: deque[list] = deque()   # each lot: [qty, cost_price]
+        self._short_lots: deque[list] = deque()  # each lot: [qty, cost_price]
         self.realized_pnl: float = 0.0
 
     @property
